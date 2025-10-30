@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
             onSurface: Colors.black,
           ),
         ),
-        home: MyHomePage(),
+        home: const MyHomePage(),
       ),
     );
   }
@@ -109,9 +109,9 @@ class TicketPage extends StatelessWidget {
                 style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
-              TicketCard(),
+              const TicketCard(),
               const SizedBox(height: 20),
-              TicketCard(),
+              const TicketCard(),
               const SizedBox(height: 40),
             ],
           ),
@@ -290,7 +290,7 @@ class TicketCard extends StatelessWidget {
                             fit: BoxFit.contain,
                           ),
                           const SizedBox(height: 4),
-                          Text(
+                          const Text(
                             'UNUSED',
                             style: TextStyle(
                               fontSize: 10,
