@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'classes/StopData.dart';
+import 'dart:convert';
 
 void main() {
   runApp(const MyApp());
@@ -53,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
         page = const TicketPage();
         break;
       case 1:
-        page = const Placeholder();
+        page = const MapScreen();
         break;
       case 2:
         page = const Placeholder();
@@ -63,12 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     return Scaffold(
-      body: SafeArea(
-        child: Container(
-          color: Theme.of(context).colorScheme.primaryContainer,
-          child: page,
-        ),
-      ),
+      body: page,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
         onTap: (value) {
@@ -81,7 +80,10 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.airplane_ticket),
             label: 'Tickets',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),
             label: 'Account',
@@ -91,6 +93,84 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+
+class MapScreen extends StatefulWidget {
+  const MapScreen({super.key});
+
+  @override
+  State<MapScreen> createState() => MapScreenState();
+}
+
+class MapScreenState extends State<MapScreen> {
+  late GoogleMapController mapController;
+  Set<Marker> _markers = {};
+  String? styleString;
+
+  final LatLng _center = const LatLng(46.067808715456785, 11.130308912105304);
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+    _loadMapStyle();
+    _loadMarkers();
+  }
+
+  void _loadMapStyle() async {
+    try {
+      final style = await rootBundle.loadString('assets/map_style.json');
+      setState(() {
+        styleString = style;
+      });
+      print("Stile mappa applicato con successo.");
+    } catch (e) {
+      print("Errore nel caricamento o applicazione dello stile: $e");
+    }
+  }
+
+  void _loadMarkers() async {
+    try {
+      final jsonString = await rootBundle.loadString('assets/stop_data.json');
+      final List<dynamic> stopsJson = json.decode(jsonString);
+      print("Elementi JSON trovati: ${stopsJson.length}");
+      final Set<Marker> newMarkers = {};
+
+      for (var stopJson in stopsJson) {
+        final stop = StopData.fromJson(stopJson);
+        final marker = Marker(
+          markerId: MarkerId(stop.stopId.toString()),
+          position: LatLng(stop.stopLat, stop.stopLon),
+          infoWindow: InfoWindow(
+            title: stop.stopName,
+            snippet:
+                'Linee: ${stop.routes.map((r) => r.routeShortName).join(', ')}',
+          ),
+        );
+        newMarkers.add(marker);
+      }
+
+      setState(() {
+        _markers = newMarkers;
+        print("Marker caricati: ${_markers.length}");
+      });
+    } catch (e) {
+      print("🚨 ERRORE nel caricamento/parsing dei marker: $e");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GoogleMap(
+        style: styleString,
+        onMapCreated: _onMapCreated,
+        initialCameraPosition: CameraPosition(target: _center, zoom: 13.0),
+        markers: _markers,
+        mapType: MapType.normal,
+        zoomControlsEnabled: true,
+      ),
+    );
+  }
+} 
 
 class TicketPage extends StatelessWidget {
   const TicketPage({super.key});
@@ -134,7 +214,7 @@ class TicketCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 6,
             offset: const Offset(0, 3),
           ),
@@ -173,12 +253,17 @@ class TicketCard extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(width: 32),
             ],
           ),
 
+          const SizedBox(height: 12),
+
           Row(
             children: [
-              Expanded(child: Container(height: 1, color: Colors.black)),
+              Expanded(
+                child: Container(height: 1, color: Colors.black12),
+              ),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 6.0),
                 child: Text(
@@ -186,9 +271,13 @@ class TicketCard extends StatelessWidget {
                   style: TextStyle(fontSize: 10, color: Colors.black54),
                 ),
               ),
-              Expanded(child: Container(height: 1, color: Colors.black)),
+              Expanded(
+                child: Container(height: 1, color: Colors.black12),
+              ),
             ],
           ),
+
+          const SizedBox(height: 12),
 
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -247,7 +336,6 @@ class TicketCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 12),
-
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 8),
