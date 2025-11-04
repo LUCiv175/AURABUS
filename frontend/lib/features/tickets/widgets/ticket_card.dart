@@ -108,7 +108,7 @@ class _TicketBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: const [
+      children: [
         Expanded(flex: 4, child: _TicketInfoPanel()),
         SizedBox(width: 16),
         Expanded(flex: 2, child: _TicketQrPanel()),

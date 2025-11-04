@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:aurabus/core/providers/app_state.dart';
-import 'package:provider/provider.dart'; // Importiamo Provider
+import 'package:provider/provider.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});

@@ -26,9 +26,9 @@ class MyAppState extends ChangeNotifier {
   Future<void> _loadMapStyle() async {
     try {
       _mapStyle = await rootBundle.loadString('assets/map_style.json');
-      print("Stile mappa caricato con successo nello Stato.");
+      debugPrint("Stile mappa caricato con successo nello Stato.");
     } catch (e) {
-      print("Errore nel caricamento dello stile: $e");
+      debugPrint("Errore nel caricamento dello stile: $e");
     }
   }
 
@@ -52,9 +52,9 @@ class MyAppState extends ChangeNotifier {
         newMarkers.add(marker);
       }
       _markers = newMarkers;
-      print("Marker caricati con successo nello Stato: ${_markers.length}");
+      debugPrint("Marker caricati con successo nello Stato: ${_markers.length}");
     } catch (e) {
-      print("🚨 ERRORE nel caricamento/parsing dei marker: $e");
+      debugPrint("🚨 ERRORE nel caricamento/parsing dei marker: $e");
     }
   }
 }
