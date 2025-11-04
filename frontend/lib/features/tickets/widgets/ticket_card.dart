@@ -109,9 +109,9 @@ class _TicketBody extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Expanded(flex: 4, child: _TicketInfoPanel()),
-        SizedBox(width: 16),
-        Expanded(flex: 2, child: _TicketQrPanel()),
+        const Expanded(flex: 4, child: _TicketInfoPanel()),
+        const SizedBox(width: 16),
+        const Expanded(flex: 2, child: _TicketQrPanel()),
       ],
     );
   }
