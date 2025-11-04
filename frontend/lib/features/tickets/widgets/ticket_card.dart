@@ -126,10 +126,10 @@ class _TicketInfoPanel extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
-          children: const [
-            _InfoPill(text: '70 minuti', isFirst: true),
-            SizedBox(width: 1.5),
-            _InfoPill(text: '€ 1.20', isLast: true, isItalic: true),
+          children: [
+            const _InfoPill(text: '70 minuti', isFirst: true),
+            const SizedBox(width: 1.5),
+            const _InfoPill(text: '€ 1.20', isLast: true, isItalic: true),
           ],
         ),
         const SizedBox(height: _kVerticalSpacing),
