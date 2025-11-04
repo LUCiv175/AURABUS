@@ -32,12 +32,12 @@ class TicketCard extends StatelessWidget {
         ],
       ),
       child: Column(
-        children: const [
-          _TicketHeader(),
-          SizedBox(height: _kVerticalSpacing),
-          _TicketDivider(),
-          SizedBox(height: _kVerticalSpacing),
-          _TicketBody(),
+        children: [
+          const _TicketHeader(),
+          const SizedBox(height: _kVerticalSpacing),
+          const _TicketDivider(),
+          const SizedBox(height: _kVerticalSpacing),
+          const _TicketBody(),
         ],
       ),
     );
