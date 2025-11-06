@@ -1,26 +1,25 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
-require('dotenv').config();
-
-const dbUser = process.env.MONGO_USER;
-const dbPass = process.env.MONGO_PASS;
-const dbHost = process.env.MONGO_HOST;
-const dbName = 'aurabus_db';
-
-const mongoURI = `mongodb://${dbUser}:${dbPass}@${dbHost}:27017/${dbName}?authSource=admin`;
-
-mongoose.connect(mongoURI)
-  .then(() => console.log('Connected to MongoDB!'))
-  .catch(err => console.error('Error connecting to MongoDB:', err.message));
+const config = require('./config');
 
 const app = express();
-const port = process.env.API_PORT || 3000;
+const port = config.api.port;
+
+const { user, pass, host, name } = config.db;
+const mongoURI = `mongodb://${user}:${pass}@${host}:27017/${name}?authSource=admin`;
+
+mongoose.connect(mongoURI)
+  .then(() => console.log('Connected to MongoDB successfully!'))
+  .catch(err => {
+    console.error('Error connecting to MongoDB:', err.message);
+    process.exit(1);
+  });
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('Hello World! My AuraBus API is alive!');
 });
 
 app.listen(port, () => {
-  console.log(`Server Api Listening on port ${port}`);
+  console.log(`Server API listening on port ${port}`);
 });
