@@ -1,0 +1,27 @@
+
+services:
+  api:
+    container_name: aurabus_api
+    build: .
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./src:/app/src
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+
+  db:
+    container_name: aurabus_mongo_db
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS}
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
