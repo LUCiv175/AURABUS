@@ -1,4 +1,3 @@
-// lib/app.dart
 import 'package:flutter/material.dart';
 import 'package:aurabus/features/home/presentation/home_page.dart';
 
@@ -10,16 +9,16 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'AuraBus',
       theme: ThemeData(
-        colorScheme: const ColorScheme(
-          brightness: Brightness.light,
+        scaffoldBackgroundColor: const Color(0xFFF8F8F8),
+        colorScheme: const ColorScheme.light(
           primary: Colors.black,
-          onPrimary: Colors.black,
-          secondary: Colors.grey,
-          onSecondary: Colors.black,
-          error: Colors.red,
-          onError: Colors.black,
-          surface: Colors.grey,
-          onSurface: Colors.black,
+          surface: Colors.white,
+          secondary: Color(0xFF808080),
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Color(0xFFF8F8F8),
+          selectedItemColor: Colors.black,
+          unselectedItemColor: Color(0xFFA6A6A6),
         ),
       ),
       home: const HomePage(),

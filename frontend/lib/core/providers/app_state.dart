@@ -52,7 +52,9 @@ class MyAppState extends ChangeNotifier {
         newMarkers.add(marker);
       }
       _markers = newMarkers;
-      debugPrint("Marker caricati con successo nello Stato: ${_markers.length}");
+      debugPrint(
+        "Marker caricati con successo nello Stato: ${_markers.length}",
+      );
     } catch (e) {
       debugPrint("🚨 ERRORE nel caricamento/parsing dei marker: $e");
     }

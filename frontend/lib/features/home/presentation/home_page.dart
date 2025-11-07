@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:aurabus/features/map/presentation/map_screen.dart';
 import 'package:aurabus/features/tickets/presentation/ticket_page.dart';
+import 'package:aurabus/features/account/presentation/account_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,7 +16,7 @@ class _HomePageState extends State<HomePage> {
   static const List<Widget> _widgetOptions = <Widget>[
     TicketPage(),
     MapScreen(),
-    Placeholder(),
+    AccountPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -34,12 +35,15 @@ class _HomePageState extends State<HomePage> {
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.airplane_ticket),
+            icon: Icon(Icons.airplane_ticket, size: 28),
             label: 'Tickets',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
+            icon: Icon(Icons.home, size: 28),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle, size: 28),
             label: 'Account',
           ),
         ],
