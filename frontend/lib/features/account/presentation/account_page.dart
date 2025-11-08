@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:aurabus/features/account/widgets/account_section.dart';
+import 'package:aurabus/features/account/widgets/account_info_body.dart';
+import 'package:aurabus/features/account/widgets/contact_us_body.dart';
+import 'package:aurabus/features/account/widgets/subscription_body.dart';
+
+enum AccountSectionType { info, subscription, contact, ranking }
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -9,15 +14,15 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  final Set<int> expandedSections = {};
+  final Set<AccountSectionType> expandedSections = {};
   bool busNotificationEnabled = true;
 
-  void toggleSection(int index) {
+  void toggleSection(AccountSectionType section) {
     setState(() {
-      if (expandedSections.contains(index)) {
-        expandedSections.remove(index);
+      if (expandedSections.contains(section)) {
+        expandedSections.remove(section);
       } else {
-        expandedSections.add(index);
+        expandedSections.add(section);
       }
     });
   }
@@ -40,62 +45,13 @@ class _AccountPageState extends State<AccountPage> {
 
               AccountSection(
                 title: 'Account Info',
-                isExpanded: expandedSections.contains(0),
-                onTap: () => toggleSection(0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const CircleAvatar(
-                          radius: 28,
-                          backgroundImage: AssetImage('assets/profile_pic.png'),
-                        ),
-                        const SizedBox(width: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              'John Doe',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              'Edit your profile picture',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.black54,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Settings',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Bus Coming Notification'),
-                        Switch(
-                          value: busNotificationEnabled,
-                          onChanged: (value) {
-                            setState(() => busNotificationEnabled = value);
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                  ],
+                isExpanded: expandedSections.contains(AccountSectionType.info),
+                onTap: () => toggleSection(AccountSectionType.info),
+                child: AccountInfoBody(
+                  busNotificationEnabled: busNotificationEnabled,
+                  onNotificationToggle: (value) {
+                    setState(() => busNotificationEnabled = value);
+                  },
                 ),
               ),
 
@@ -103,138 +59,32 @@ class _AccountPageState extends State<AccountPage> {
 
               AccountSection(
                 title: 'Subscription',
-                isExpanded: expandedSections.contains(1),
-                onTap: () => toggleSection(1),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'LIBERA CIRCOLAZIONE UNITN',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-
-                        const Icon(
-                          Icons.qr_code_2_rounded,
-                          size: 40,
-                          color: Colors.black,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [Text('Code:'), Text('00000')],
-                    ),
-                    const SizedBox(height: 4),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text('Status:'),
-                        Text(
-                          'Valid',
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Type:'),
-                        Text(
-                          'Libera circolazione UNITN',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [Text('Start date:'), Text('01/09/2025')],
-                    ),
-                    const SizedBox(height: 4),
-
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [Text('Expiration Date:'), Text('31/08/2026')],
-                    ),
-                  ],
+                isExpanded: expandedSections.contains(
+                  AccountSectionType.subscription,
                 ),
+                onTap: () => toggleSection(AccountSectionType.subscription),
+                child: const SubscriptionBody(),
               ),
 
               const SizedBox(height: 12),
 
               AccountSection(
                 title: 'Contact Us',
-                isExpanded: expandedSections.contains(2),
-                onTap: () => toggleSection(2),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: const [
-                        Icon(
-                          Icons.email_outlined,
-                          size: 20,
-                          color: Colors.black54,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'support@aurabus.com',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: const [
-                        Icon(Icons.phone, size: 20, color: Colors.black54),
-                        SizedBox(width: 8),
-                        Text(
-                          '+39 333 123 4567',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: const [
-                        Icon(
-                          Icons.camera_alt_outlined,
-                          size: 20,
-                          color: Colors.black54,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          '@aurabus_official',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ],
-                    ),
-                  ],
+                isExpanded: expandedSections.contains(
+                  AccountSectionType.contact,
                 ),
+                onTap: () => toggleSection(AccountSectionType.contact),
+                child: const ContactUsBody(),
               ),
 
               const SizedBox(height: 12),
 
               AccountSection(
                 title: 'Ranking',
-                isExpanded: expandedSections.contains(3),
-                onTap: () => toggleSection(3),
+                isExpanded: expandedSections.contains(
+                  AccountSectionType.ranking,
+                ),
+                onTap: () => toggleSection(AccountSectionType.ranking),
               ),
 
               const SizedBox(height: 12),
