@@ -1,38 +1,44 @@
-// lib/features/home/presentation/home_page.dart
 import 'package:flutter/material.dart';
-import 'package:aurabus/features/map/presentation/map_screen.dart';
-import 'package:aurabus/features/tickets/presentation/ticket_page.dart';
-import 'package:aurabus/features/account/presentation/account_page.dart';
+import 'package:go_router/go_router.dart';
+import 'package:aurabus/routing/router.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HomePage extends StatelessWidget {
+  final Widget child;
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
+  const HomePage({super.key, required this.child});
 
-class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
-  static const List<Widget> _widgetOptions = <Widget>[
-    TicketPage(),
-    MapScreen(),
-    AccountPage(),
-  ];
+  int _calculateSelectedIndex(BuildContext context) {
+    final location = GoRouterState.of(context).uri.toString();
+    if (location.startsWith(AppRoute.tickets)) return 0;
+    if (location.startsWith(AppRoute.map)) return 1;
+    if (location.startsWith(AppRoute.account)) return 2;
+    return 0;
+  }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  void _onItemTapped(int index, BuildContext context) {
+    switch (index) {
+      case 0:
+        context.go(AppRoute.tickets);
+        break;
+      case 1:
+        context.go(AppRoute.map);
+        break;
+      case 2:
+        context.go(AppRoute.account);
+        break;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final selectedIndex = _calculateSelectedIndex(context);
+
     return Scaffold(
-      body: IndexedStack(index: _selectedIndex, children: _widgetOptions),
+      body: child,
 
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        currentIndex: selectedIndex,
+        onTap: (index) => _onItemTapped(index, context),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.airplane_ticket, size: 28),

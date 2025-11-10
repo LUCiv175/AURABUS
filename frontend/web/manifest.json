@@ -1,6 +1,6 @@
 {
-    "name": "frontend",
-    "short_name": "frontend",
+    "name": "aurabus",
+    "short_name": "aurabus",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
