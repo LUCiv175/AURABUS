@@ -37,12 +37,17 @@ class MyAppState extends ChangeNotifier {
       final jsonString = await rootBundle.loadString('assets/stop_data.json');
       final List<dynamic> stopsJson = json.decode(jsonString);
       final Set<Marker> newMarkers = {};
+      final BitmapDescriptor customIcon = await BitmapDescriptor.asset(
+        const ImageConfiguration(size: Size(20, 20)),
+        'assets/bus_stop_icon.png',
+      );
 
       for (var stopJson in stopsJson) {
         final stop = StopData.fromJson(stopJson);
         final marker = Marker(
           markerId: MarkerId(stop.stopId.toString()),
           position: LatLng(stop.stopLat, stop.stopLon),
+          icon: customIcon,
           infoWindow: InfoWindow(
             title: stop.stopName,
             snippet:
@@ -52,7 +57,9 @@ class MyAppState extends ChangeNotifier {
         newMarkers.add(marker);
       }
       _markers = newMarkers;
-      debugPrint("Marker caricati con successo nello Stato: ${_markers.length}");
+      debugPrint(
+        "Marker caricati con successo nello Stato: ${_markers.length}",
+      );
     } catch (e) {
       debugPrint("🚨 ERRORE nel caricamento/parsing dei marker: $e");
     }
