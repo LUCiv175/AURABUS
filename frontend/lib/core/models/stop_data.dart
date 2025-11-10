@@ -31,19 +31,15 @@ class StopData {
 
   factory StopData.fromJson(Map<String, dynamic> json) {
     return StopData(
-      // Gestione del double nullable
       distance: json['distance'] as double?,
-      // Gestione della lista di Route
       routes: (json['routes'] as List<dynamic>)
           .map((e) => Route.fromJson(e as Map<String, dynamic>))
           .toList(),
       stopCode: (json['stopCode'] as String?) ?? '',
       stopDesc: json['stopDesc'] as String?,
       stopId: json['stopId'] as int,
-      // CONVERSIONE CRUCIALE DA num A double
       stopLat: (json['stopLat'] as num).toDouble(),
       stopLevel: json['stopLevel'] as int,
-      // CONVERSIONE CRUCIALE DA num A double
       stopLon: (json['stopLon'] as num).toDouble(),
       stopName: (json['stopName'] as String?) ?? '',
       street: (json['street'] as String?) ?? '',
