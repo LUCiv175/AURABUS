@@ -94,14 +94,10 @@ flutter:
     # see https://flutter.dev/to/font-from-package
 
 flutter_launcher_icons:
-  # Percorso della tua immagine master
   image_path: "assets/logo.png" 
-  # Piattaforme che devono essere aggiornate
   android: true
   ios: true
   remove_alpha_ios: true
   web: 
-    # Specifica se generare solo la favicon o anche le PWA icons
     generate: true 
-    # Nome del file favicon (opzionale)
     favicon_path: "web/favicon.png"
