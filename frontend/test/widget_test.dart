@@ -108,7 +108,7 @@ void main() {
     });
   });
 
-  group('Test di Navigazione', () {
+  group('Navigation Tests', () {
     Future<void> pumpApp(WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
