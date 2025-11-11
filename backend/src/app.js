@@ -17,7 +17,9 @@ async function connectDb() {
   }
 }
 
-connectDb();
+if (process.env.NODE_ENV !== 'test') {
+  connectDb();
+}
 
 app.get('/', (req, res) => {
   res.send('Hello World! My AuraBus API is alive!');
