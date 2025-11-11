@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'; // <-- 1. Aggiungi questo import
 import 'package:aurabus/app.dart';
 
 void main() {
@@ -11,6 +11,7 @@ void main() {
       ),
     );
 
+    await tester.pump();
     expect(find.text('0'), findsOneWidget);
     expect(find.text('1'), findsNothing);
 
@@ -21,3 +22,4 @@ void main() {
     expect(find.text('1'), findsOneWidget);
   });
 }
+
