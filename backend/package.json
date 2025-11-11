@@ -23,7 +23,7 @@
       "/node_modules/"
     ],
     "testMatch": [
-      "**/test/**/*.test.js"
+      "**/tests/**/*.test.js"
     ]
   }
 }
