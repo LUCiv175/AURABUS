@@ -1,0 +1,43 @@
+name: Frontend CI (Flutter)
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'frontend/**'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'frontend/**'
+
+jobs:
+  test-frontend:
+    name: Test Frontend (Flutter)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+          architecture: 'x64' 
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+        working-directory: ./frontend
+
+      - name: Analyze Dart code
+        run: flutter analyze .
+        working-directory: ./frontend
+
+      - name: Run widget tests
+        run: flutter test
+        working-directory: ./frontend
