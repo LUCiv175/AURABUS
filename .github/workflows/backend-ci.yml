@@ -31,8 +31,13 @@ jobs:
         env:
           MONGO_USER: ${{ secrets.MONGO_USER }}
           MONGO_PASS: ${{ secrets.MONGO_PASS }}
-        
         run: docker compose build api
+
+      - name: Create .env file
+        run: |
+          echo "NODE_ENV=test" > .env
+          echo "MONGO_USER=${{ secrets.MONGO_USER }}" >> .env
+          echo "MONGO_PASS=${{ secrets.MONGO_PASS }}" >> .env
 
       - name: Run tests with Jest (inside Docker)
         env:
