@@ -92,12 +92,3 @@ flutter:
     #
     # For details regarding fonts from package dependencies,
     # see https://flutter.dev/to/font-from-package
-
-flutter_launcher_icons:
-  image_path: "assets/logo.png" 
-  android: true
-  ios: true
-  remove_alpha_ios: true
-  web: 
-    generate: true 
-    favicon_path: "web/favicon.png"
