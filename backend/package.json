@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "jest --detectOpenHandles --forceExit"
+    "test": "jest --detectOpenHandles"
   },
   "dependencies": {
     "dotenv": "^17.2.3",
