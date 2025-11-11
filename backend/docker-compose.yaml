@@ -7,8 +7,10 @@ services:
       - "8888:8888"
     volumes:
       - ./src:/app/src
-    env_file:
-      - ./.env
+    environment:
+      - MONGO_USER=${MONGO_USER}
+      - MONGO_PASS=${MONGO_PASS}
+      - MONGO_HOST=db
     depends_on:
       - db
 
