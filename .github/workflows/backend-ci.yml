@@ -38,6 +38,7 @@ jobs:
           echo "NODE_ENV=test" > .env
           echo "MONGO_USER=${{ secrets.MONGO_USER }}" >> .env
           echo "MONGO_PASS=${{ secrets.MONGO_PASS }}" >> .env
+          echo "MONGO_HOST=db" >> .env
 
       - name: Run tests with Jest (inside Docker)
         env:
