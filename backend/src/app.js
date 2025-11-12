@@ -1,10 +1,10 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const config = require('./config');
+import express from 'express';
+import { connect } from 'mongoose';
+import config from './config.js';
 
-const app = express();
+export const app = express();
 
-async function connectDb() {
+export async function connectDb() {
   const { user, pass, host, name } = config.db;
   if (!user || !pass || !host) {
     console.error('Error: Missing MongoDB environment variables (USER, PASS, or HOST)');
@@ -14,7 +14,7 @@ async function connectDb() {
   const mongoURI = `mongodb://${user}:${pass}@${host}:27017/${name}?authSource=admin`;
 
   try {
-    await mongoose.connect(mongoURI);
+    await connect(mongoURI);
     console.log('Connected to MongoDB successfully!');
   } catch (err) {
     console.error('Error connecting to MongoDB:', err.message);
@@ -22,12 +22,9 @@ async function connectDb() {
   }
 }
 
-if (process.env.NODE_ENV !== 'test') {
-  connectDb();
-}
-
 app.get('/', (req, res) => {
   res.send('Hello World! My AuraBus API is alive!');
 });
 
-module.exports = app;
+// Esporta 'config'
+export { config };

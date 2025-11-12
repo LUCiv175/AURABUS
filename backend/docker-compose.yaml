@@ -9,6 +9,8 @@ services:
       - ./src:/app/src
     depends_on:
       - db
+    env_file:
+      - .env
 
   db:
     container_name: aurabus_mongo_db
