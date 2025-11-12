@@ -26,5 +26,4 @@ app.get('/', (req, res) => {
   res.send('Hello World! My AuraBus API is alive!');
 });
 
-// Esporta 'config'
 export { config };
