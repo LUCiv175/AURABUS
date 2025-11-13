@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles"
+    "test": "node --experimental-vm-modules --localstorage-file=/tmp/localstorage.json node_modules/jest/bin/jest.js --detectOpenHandles"
   },
   "dependencies": {
     "dotenv": "^17.2.3",
