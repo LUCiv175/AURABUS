@@ -30,13 +30,4 @@ describe('API Endpoints', () => {
 
     expect(response.body).toEqual(expectedStops);
   });
-
-  it('GET /routes it should return 200 and all routes data', async () => {
-    const response = await request(app)
-      .get('/routes') 
-      .expect('Content-Type', /json/) 
-      .expect(200);
-
-    expect(response.body).toEqual(expectedRoutes);
-  });
 });

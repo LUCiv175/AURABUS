@@ -9,7 +9,7 @@ const config = {
     password: process.env.API_PASS
   },
   api: {
-    port: process.env.API_PORT || 8888,
+    port: process.env.API_PORT || 8888
   },
   db: {
     user: process.env.MONGO_USER,
