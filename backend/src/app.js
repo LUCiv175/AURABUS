@@ -1,6 +1,7 @@
 import express from 'express';
 import { connect } from 'mongoose';
 import config from './config.js';
+import stopData from '../data/stops.json' with { type: 'json' };
 
 export const app = express();
 
@@ -25,5 +26,10 @@ export async function connectDb() {
 app.get('/', (req, res) => {
   res.send('Hello World! My AuraBus API is alive!');
 });
+
+app.get('/stops', (req, res) => {
+  res.json(stopData);
+});
+
 
 export { config };
