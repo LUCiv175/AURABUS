@@ -1,12 +1,17 @@
 import express from 'express';
 import { connect } from 'mongoose';
 import config from './config.js';
-import stopsData from '../data/stops.json' with { type: 'json' };
-import routesData from '../data/routes.json' with { type: 'json' };
+import { stops, routes } from './data.js';
 
 export const app = express();
 
-const header = 'Basic ' + Buffer.from(`${config.tnt.username}:${config.tnt.password}`).toString('base64');
+const header = {
+  method: 'GET',
+  headers: {
+    Authorization: 'Basic ' + Buffer.from(`${config.tnt.username}:${config.tnt.password}`).toString('base64'),
+    'X-Requested-With': 'it.tndigit.mit'
+  }
+};
 
 export async function connectDb() {
   const { user, pass, host, name } = config.db;
@@ -31,24 +36,19 @@ app.get('/', (req, res) => {
 });
 
 app.get('/stops', (req, res) => {
-  res.json(stopsData);
+  res.json(Array.from(stops.values()));
 });
 
 app.get('/stop/:id', async(req, res) => {
   const stopId = req.params.id;
-  const result = await fetch(`${config.tnt.url}/trips_new?stopId=${stopId}&type=U&limit=30`, {
-    method: 'GET',
-    headers: {
-      Authorization: header
-    }
-  })
+  const result = await fetch(`${config.tnt.url}/trips_new?stopId=${stopId}&type=U&limit=30`, header);
   const data = await result.json();
   if (data.error) {
     return res.status(500).json({ error: data.error });
   }
   const trips = [];
   data.forEach(element => {
-    const route = routesData.find(route => route.routeId === element.routeId);
+    const route = routes.get(element.routeId);
     trips.push({
       routeId: route.routeId,
       routeShortName: route.routeShortName,
@@ -61,7 +61,6 @@ app.get('/stop/:id', async(req, res) => {
   trips.sort((a, b) => a.arrivalTimeEstimated.localeCompare(b.arrivalTimeEstimated));
 
   res.json(trips);
-
 });
 
 
