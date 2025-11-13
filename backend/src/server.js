@@ -1,5 +1,6 @@
-import { app, connectDb, config } from "./app.js";
+import { app, connectDb } from "./app.js";
 import { initData } from "./data.js";
+import config from "./config.js";
 
 const port = config.api.port;
 

@@ -95,5 +95,3 @@ app.get("/stop/:id", async (req, res) => {
       .json({ error: "Failed to fetch or process data from external API." });
   }
 });
-
-export { config };
