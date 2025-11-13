@@ -1,6 +1,8 @@
 import request from 'supertest';
 import mongoose from 'mongoose';
 import { app, connectDb } from '../src/app.js';
+import expectedStops from '../data/stops.json' with { type: 'json' };
+import expectedRoutes from '../data/routes.json' with { type: 'json' };
 
 describe('API Endpoints', () => {
   
@@ -18,5 +20,23 @@ describe('API Endpoints', () => {
       .expect('Content-Type', /text\/html/)
       .expect(200);
     expect(response.text).toBe('Hello World! My AuraBus API is alive!');
+  });
+
+  it('GET /stops it should return 200 and all stops data', async () => {
+    const response = await request(app)
+      .get('/stops') 
+      .expect('Content-Type', /json/) 
+      .expect(200);
+
+    expect(response.body).toEqual(expectedStops);
+  });
+
+  it('GET /routes it should return 200 and all routes data', async () => {
+    const response = await request(app)
+      .get('/routes') 
+      .expect('Content-Type', /json/) 
+      .expect(200);
+
+    expect(response.body).toEqual(expectedRoutes);
   });
 });
