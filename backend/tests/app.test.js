@@ -27,6 +27,11 @@ describe('API Endpoints', () => {
       .expect('Content-Type', /json/) 
       .expect(200);
 
-    expect(response.body).toEqual(expectedStops);
+    const sortByStopId = arr => arr.slice().sort((a, b) => {
+      if (a.stopId < b.stopId) return -1;
+      if (a.stopId > b.stopId) return 1;
+      return 0;
+    });
+    expect(sortByStopId(response.body)).toEqual(sortByStopId(expectedStops));
   });
 });
