@@ -2,7 +2,6 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 import { app, connectDb } from '../src/app.js';
 import expectedStops from '../data/stops.json' with { type: 'json' };
-import expectedRoutes from '../data/routes.json' with { type: 'json' };
 
 describe('API Endpoints', () => {
   
