@@ -54,8 +54,17 @@ app.get('/stop/:id', async(req, res) => {
       routeShortName: route.routeShortName,
       routeLongName: route.routeLongName,
       routeColor: route.routeColor,
+      busId: element.matricolaBus,
+      lastStopId: element.stopLast,
+      nextStopId: element.stopNext,
       arrivalTimeScheduled: element.oraArrivoProgrammataAFermataSelezionata,
       arrivalTimeEstimated: element.oraArrivoEffettivaAFermataSelezionata,
+      stopTimes: [element.stopTimes.map(st => ({
+        stopId: st.stopId,
+        stopName: stops.get(st.stopId)?.stopName || 'Unknown',
+        arrivalTimeScheduled: st.oraArrivoProgrammataAFermata,
+        arrivalTimeEstimated: st.oraArrivoEffettivaAFermata
+      }))]
     });
   });
   trips.sort((a, b) => a.arrivalTimeEstimated.localeCompare(b.arrivalTimeEstimated));
