@@ -1,8 +1,13 @@
-const request = require('supertest');
-const app = require('../src/app');
-const mongoose = require('mongoose');
+import request from 'supertest';
+import mongoose from 'mongoose';
+import { app, connectDb } from '../src/app.js';
 
 describe('API Endpoints', () => {
+  
+  beforeAll(async () => {
+    await connectDb();
+  });
+
   afterAll(async () => {
     await mongoose.connection.close();
   });

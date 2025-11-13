@@ -1,4 +1,6 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const config = {
   api: {
@@ -12,4 +14,4 @@ const config = {
   }
 };
 
-module.exports = config;
+export default config;

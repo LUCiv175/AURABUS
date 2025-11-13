@@ -1,11 +1,12 @@
 {
   "name": "aurabus-api",
   "version": "1.0.0",
+  "type": "module",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "jest --detectOpenHandles"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles"
   },
   "dependencies": {
     "dotenv": "^17.2.3",
