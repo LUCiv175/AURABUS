@@ -2,11 +2,13 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 import { app, connectDb } from '../src/app.js';
 import expectedStops from '../data/stops.json' with { type: 'json' };
+import { initData } from '../src/data.js';
 
 describe('API Endpoints', () => {
   
   beforeAll(async () => {
     await connectDb();
+    await initData();
   });
 
   afterAll(async () => {
