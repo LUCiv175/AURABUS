@@ -1,11 +1,9 @@
+import { jest } from "@jest/globals";
 import request from "supertest";
 import mongoose from "mongoose";
-import { app, connectDb } from "../src/app.js";
 import expectedStops from "../data/stops.json" with { type: "json" };
-import { initData, stops, routes } from "../src/data.js";
-import { jest } from "@jest/globals";
 
-jest.mock("../src/data.js", () => ({
+await jest.unstable_mockModule("../src/data.js", () => ({
   initData: jest.fn(),
   stops: {
     get: jest.fn(),
@@ -15,6 +13,9 @@ jest.mock("../src/data.js", () => ({
     get: jest.fn(),
   },
 }));
+
+const { app, connectDb } = await import("../src/app.js");
+const { initData, stops, routes } = await import("../src/data.js");
 
 describe("API Endpoints", () => {
   beforeAll(async () => {
