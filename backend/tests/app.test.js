@@ -1,12 +1,22 @@
-import request from 'supertest';
-import mongoose from 'mongoose';
-import { app, connectDb } from '../src/app.js';
-import expectedStops from '../data/stops.json' with { type: 'json' };
-import { initData } from '../src/data.js';
+import request from "supertest";
+import mongoose from "mongoose";
+import { app, connectDb } from "../src/app.js";
+import expectedStops from "../data/stops.json" with { type: "json" };
+import { initData, stops, routes } from "../src/data.js";
 import { jest } from "@jest/globals";
 
-describe('API Endpoints', () => {
-  
+jest.mock("../src/data.js", () => ({
+  initData: jest.fn(),
+  stops: {
+    get: jest.fn(),
+    values: jest.fn(),
+  },
+  routes: {
+    get: jest.fn(),
+  },
+}));
+
+describe("API Endpoints", () => {
   beforeAll(async () => {
     await connectDb();
     await initData();
@@ -16,25 +26,28 @@ describe('API Endpoints', () => {
     await mongoose.connection.close();
   });
 
-  it('GET / it should return 200 and a greeting message', async () => {
+  it("GET / it should return 200 and a greeting message", async () => {
     const response = await request(app)
-      .get('/')
-      .expect('Content-Type', /text\/html/)
+      .get("/")
+      .expect("Content-Type", /text\/html/)
       .expect(200);
-    expect(response.text).toBe('Hello World! My AuraBus API is alive!');
+    expect(response.text).toBe("Hello World! My AuraBus API is alive!");
   });
 
-  it('GET /stops it should return 200 and all stops data', async () => {
+  it("GET /stops it should return 200 and all stops data", async () => {
+    stops.values.mockReturnValue(expectedStops);
+
     const response = await request(app)
-      .get('/stops') 
-      .expect('Content-Type', /json/) 
+      .get("/stops")
+      .expect("Content-Type", /json/)
       .expect(200);
 
-    const sortByStopId = arr => arr.slice().sort((a, b) => {
-      if (a.stopId < b.stopId) return -1;
-      if (a.stopId > b.stopId) return 1;
-      return 0;
-    });
+    const sortByStopId = (arr) =>
+      arr.slice().sort((a, b) => {
+        if (a.stopId < b.stopId) return -1;
+        if (a.stopId > b.stopId) return 1;
+        return 0;
+      });
     expect(sortByStopId(response.body)).toEqual(sortByStopId(expectedStops));
   });
 });
@@ -69,7 +82,7 @@ describe("GET /stops/:id (Trip Details)", () => {
       routeLongName: "Centro - Sobborgo",
       routeColor: "blue",
     };
-    
+
     const mockStopTime1 = { stopName: "Fermata 1" };
     const mockStopTime2 = { stopName: "Fermata 2" };
 
@@ -94,7 +107,7 @@ describe("GET /stops/:id (Trip Details)", () => {
     expect(routes.get).toHaveBeenCalledWith("R1");
     expect(stops.get).toHaveBeenCalledWith("S1");
     expect(stops.get).toHaveBeenCalledWith("S2");
-    
+
     expect(res.body).toEqual([
       {
         routeId: "R1",
@@ -108,8 +121,18 @@ describe("GET /stops/:id (Trip Details)", () => {
         arrivalTimeScheduled: "10:00:00",
         arrivalTimeEstimated: "10:00:15",
         stopTimes: [
-          { stopId: "S1", stopName: "Fermata 1", arrivalTimeScheduled: "09:55:00", arrivalTimeEstimated: "09:55:10" },
-          { stopId: "S2", stopName: "Fermata 2", arrivalTimeScheduled: "10:00:00", arrivalTimeEstimated: "10:00:15" },
+          {
+            stopId: "S1",
+            stopName: "Fermata 1",
+            arrivalTimeScheduled: "09:55:00",
+            arrivalTimeEstimated: "09:55:10",
+          },
+          {
+            stopId: "S2",
+            stopName: "Fermata 2",
+            arrivalTimeScheduled: "10:00:00",
+            arrivalTimeEstimated: "10:00:15",
+          },
         ],
       },
     ]);
@@ -141,13 +164,15 @@ describe("GET /stops/:id (Trip Details)", () => {
     expect(res.statusCode).toBe(500);
     expect(res.body).toEqual({ error: "Invalid API Key" });
   });
-  
+
   it("should return 502 if fetch throws a network error", async () => {
     fetchSpy.mockRejectedValue(new Error("Network connection failed"));
 
     const res = await request(app).get("/stops/id-valido");
 
     expect(res.statusCode).toBe(502);
-    expect(res.body).toEqual({ error: "Failed to fetch or process data from external API." });
+    expect(res.body).toEqual({
+      error: "Failed to fetch or process data from external API.",
+    });
   });
 });
