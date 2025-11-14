@@ -9,7 +9,7 @@
           name: id
           required: true
           schema:
-            type: integer
+            type: string
           description: The unique ID of the stop to query.
       responses:
         '200':

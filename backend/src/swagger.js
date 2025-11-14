@@ -34,7 +34,7 @@ const options = {
 const specs = swaggerJsdoc(options);
 
 /**
- * * @param {object} app
+ * @param {object} app
  */
 export function setupSwagger(app) {
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));

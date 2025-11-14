@@ -31,8 +31,10 @@ components:
                 type: string
         stopCode:
           type: string
+          nullable: true
         stopDesc:
           type: string
+          nullable: true
         stopId:
           type: integer
         stopLat:
@@ -47,9 +49,12 @@ components:
           type: string
         street:
           type: string
+          nullable: true
         town:
           type: string
+          nullable: true
         type:
           type: string
+          nullable: true
         wheelchairBoarding:
           type: integer
