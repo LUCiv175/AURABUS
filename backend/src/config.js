@@ -10,6 +10,7 @@ const config = {
   },
   api: {
     port: process.env.API_PORT || 8888,
+    baseUrl: process.env.API_BASE_URL || "http://localhost",
   },
   db: {
     user: process.env.MONGO_USER,

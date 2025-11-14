@@ -21,7 +21,7 @@
                 items:
                   $ref: '#/components/schemas/TripDetail'
         '500':
-          description: Internal server error or error from the external API (invalid data).
+          description: Internal server error, or error from the external API due to invalid data (e.g., malformed JSON, missing required fields, or unexpected data types). A 500 error is returned when the external API responds but the data cannot be processed. A 502 error is returned when the external API is unreachable or returns a non-successful HTTP response.
           content:
             application/json:
               schema:
@@ -31,4 +31,4 @@
           content:
             application/json:
               schema:
-                $ref: '#components/schemas/Error'
+                $ref: '#/components/schemas/Error'

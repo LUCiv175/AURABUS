@@ -8,6 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const port = config.api.port;
+const baseUrl = config.api.baseUrl;
 
 const options = {
   definition: {
@@ -19,7 +20,7 @@ const options = {
     },
     servers: [
       {
-        url: `http://localhost:${port}`,
+        url: `${baseUrl}:${port}`,
         description: "Development Server",
       },
     ],
@@ -32,6 +33,9 @@ const options = {
 
 const specs = swaggerJsdoc(options);
 
+/**
+ * * @param {object} app
+ */
 export function setupSwagger(app) {
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
   console.log("Documentation Swagger UI available on /api-docs");
