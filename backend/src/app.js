@@ -2,8 +2,11 @@ import express from "express";
 import { connect } from "mongoose";
 import config from "./config.js";
 import { stops, routes } from "./data.js";
+import { setupSwagger } from "./swagger.js";
 
 export const app = express();
+
+setupSwagger(app);
 
 const header = {
   method: "GET",
@@ -45,7 +48,7 @@ app.get("/stops", (req, res) => {
   res.json(Array.from(stops.values()));
 });
 
-app.get("/stop/:id", async (req, res) => {
+app.get("/stops/:id", async (req, res) => {
   const stopId = req.params.id;
   try {
     const result = await fetch(
@@ -70,6 +73,7 @@ app.get("/stop/:id", async (req, res) => {
         routeLongName: route.routeLongName,
         routeColor: route.routeColor,
         busId: element.matricolaBus,
+        delay: element.delay,
         lastStopId: element.stopLast,
         nextStopId: element.stopNext,
         arrivalTimeScheduled: element.oraArrivoProgrammataAFermataSelezionata,
@@ -78,8 +82,8 @@ app.get("/stop/:id", async (req, res) => {
           ? element.stopTimes.map((st) => ({
               stopId: st.stopId,
               stopName: stops.get(st.stopId)?.stopName || "Unknown",
-              arrivalTimeScheduled: st.oraArrivoProgrammataAFermata,
-              arrivalTimeEstimated: st.oraArrivoEffettivaAFermata,
+              arrivalTimeScheduled: st.arrivalTime,
+              arrivalTimeEstimated: st.departureTime,
             }))
           : [],
       });

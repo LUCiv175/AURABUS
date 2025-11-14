@@ -1,0 +1,14 @@
+  /stops:
+    get:
+      summary: Return all the stops
+      tags:
+        - Stops
+      responses:
+        '200':
+          description: A list of all the Urban stops available
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StopDetail'

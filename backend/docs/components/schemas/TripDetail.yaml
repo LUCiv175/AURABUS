@@ -1,0 +1,36 @@
+components:
+  schemas:
+    TripDetail:
+      type: object
+      properties:
+        routeId:
+          type: integer
+        routeShortName:
+          type: string
+        routeLongName:
+          type: string
+        routeColor:
+          type: string
+          example: "#00A88F"
+          nullable: true
+        busId:
+          type: string
+          description: "Id of the bus"
+        delay:
+          type: integer
+        lastStopId:
+          type: integer
+        nextStopId:
+          type: integer
+        arrivalTimeScheduled:
+          type: string
+          format: time
+          example: "14:30:00"
+        arrivalTimeEstimated:
+          type: string
+          format: time
+          example: "14:32:15"
+        stopTimes:
+          type: array
+          items:
+            $ref: '#/components/schemas/StopTime'

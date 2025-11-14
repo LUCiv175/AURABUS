@@ -1,0 +1,17 @@
+components:
+  schemas:
+    StopTime:
+      type: object
+      properties:
+        stopId:
+          type: integer
+        stopName:
+          type: string
+        arrivalTimeScheduled:
+          type: string
+          format: time
+          example: "14:35:00"
+        arrivalTimeEstimated:
+          type: string
+          format: time
+          example: "14:36:10"
