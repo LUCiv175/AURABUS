@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { app, connectDb } from '../src/app.js';
 import expectedStops from '../data/stops.json' with { type: 'json' };
 import { initData } from '../src/data.js';
+import { jest } from "@jest/globals";
 
 describe('API Endpoints', () => {
   
