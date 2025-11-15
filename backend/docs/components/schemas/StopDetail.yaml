@@ -1,0 +1,60 @@
+components:
+  schemas:
+    StopDetail:
+      type: object
+      properties:
+        distance:
+          type: number
+          nullable: true
+        routes:
+          type: array
+          items:
+            type: object
+            properties:
+              areaId:
+                type: integer
+              news:
+                type: string
+                nullable: true
+              routeColor:
+                type: string
+                nullable: true
+              routeId:
+                type: integer
+              routeLongName:
+                type: string
+              routeShortName:
+                type: string
+              routeType:
+                type: integer
+              type:
+                type: string
+        stopCode:
+          type: string
+          nullable: true
+        stopDesc:
+          type: string
+          nullable: true
+        stopId:
+          type: integer
+        stopLat:
+          type: number
+          format: float
+        stopLevel:
+          type: integer
+        stopLon:
+          type: number
+          format: float
+        stopName:
+          type: string
+        street:
+          type: string
+          nullable: true
+        town:
+          type: string
+          nullable: true
+        type:
+          type: string
+          nullable: true
+        wheelchairBoarding:
+          type: integer
