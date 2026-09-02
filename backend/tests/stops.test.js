@@ -705,6 +705,115 @@ describe("Stops API", () => {
       expect(stopTime102.delayPredicted).toBe(180);
     });
 
+    it("should send the origin stop and both horizon distances to the AI service", async () => {
+      const mockApiResponse = [
+        {
+          routeId: 396,
+          matricolaBus: "BUS001",
+          tripId: "TRIP123",
+          directionId: 0,
+          delay: 4,
+          stopLast: 101,
+          stopNext: 102,
+          lastSequenceDetection: 1,
+          lastEventRecivedAt: "2024-01-15T10:30:00Z",
+          oraArrivoProgrammataAFermataSelezionata: "2024-01-15T10:45:00Z",
+          oraArrivoEffettivaAFermataSelezionata: "2024-01-15T10:47:00Z",
+          stopTimes: [
+            { stopId: 101, arrivalTime: "10:30:00", sequence: 1 },
+            { stopId: 102, arrivalTime: "10:45:00", sequence: 2 },
+            { stopId: 103, arrivalTime: "11:00:00", sequence: 3 },
+          ],
+        },
+      ];
+
+      let sentBody = null;
+      fetchMock.mockImplementation((url, options) => {
+        if (url.includes("/trips_new")) {
+          return Promise.resolve({ ok: true, json: async () => mockApiResponse });
+        }
+        if (url.includes("/predict")) {
+          sentBody = JSON.parse(options.body);
+          return Promise.resolve({
+            ok: true,
+            json: async () => ({ predictions: [] }),
+          });
+        }
+        return Promise.reject(new Error(`Unmocked URL: ${url}`));
+      });
+
+      await request(app).get("/stops/102");
+
+      expect(sentBody.current_stop_encoded).toBe(101);
+      expect(sentBody.current_delay).toBe(4);
+      expect(sentBody.future_stops).toEqual([
+        expect.objectContaining({
+          stop_encoded: 102,
+          hour: 10,
+          stops_ahead: 1,
+          minutes_ahead: 15,
+        }),
+        expect.objectContaining({
+          stop_encoded: 103,
+          hour: 11,
+          stops_ahead: 2,
+          minutes_ahead: 30,
+        }),
+      ]);
+    });
+
+    it("should assign predictions per visit when a route calls at the same stop twice", async () => {
+      const mockApiResponse = [
+        {
+          routeId: 396,
+          matricolaBus: "BUS001",
+          tripId: "TRIP123",
+          directionId: 0,
+          delay: 120,
+          stopLast: 0,
+          stopNext: 102,
+          lastSequenceDetection: 1,
+          lastEventRecivedAt: "2024-01-15T10:30:00Z",
+          oraArrivoProgrammataAFermataSelezionata: "2024-01-15T10:45:00Z",
+          oraArrivoEffettivaAFermataSelezionata: "2024-01-15T10:47:00Z",
+          stopTimes: [
+            { stopId: 101, arrivalTime: "10:30:00", sequence: 1 },
+            { stopId: 102, arrivalTime: "10:45:00", sequence: 2 },
+            { stopId: 103, arrivalTime: "11:00:00", sequence: 3 },
+            // Loop back through 102 on the way to the terminus.
+            { stopId: 102, arrivalTime: "11:15:00", sequence: 4 },
+          ],
+        },
+      ];
+
+      fetchMock.mockImplementation((url) => {
+        if (url.includes("/trips_new")) {
+          return Promise.resolve({ ok: true, json: async () => mockApiResponse });
+        }
+        if (url.includes("/predict")) {
+          return Promise.resolve({
+            ok: true,
+            json: async () => ({
+              predictions: [
+                { stop_encoded: 102, predicted_delay: 180 },
+                { stop_encoded: 103, predicted_delay: 240 },
+                { stop_encoded: 102, predicted_delay: 300 },
+              ],
+            }),
+          });
+        }
+        return Promise.reject(new Error(`Unmocked URL: ${url}`));
+      });
+
+      const res = await request(app).get("/stops/102");
+
+      expect(res.statusCode).toBe(200);
+      const stopTimes = res.body[0].stopTimes;
+      expect(stopTimes[1].delayPredicted).toBe(180);
+      expect(stopTimes[2].delayPredicted).toBe(240);
+      expect(stopTimes[3].delayPredicted).toBe(300);
+    });
+
     it("should handle prediction service failure gracefully", async () => {
       const mockApiResponse = [
         {
