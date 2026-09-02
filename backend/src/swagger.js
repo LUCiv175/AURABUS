@@ -20,8 +20,15 @@ const options = {
     },
     servers: [
       {
-        url: `${baseUrl}:${port}`,
-        description: "Development Server",
+        url:
+          process.env.PUBLIC_API_URL ||
+          (process.env.NODE_ENV === "production"
+            ? "https://api.aurabus.it"
+            : `${baseUrl}:${port}`),
+        description:
+          process.env.NODE_ENV === "production"
+            ? "Production Server"
+            : "Development Server",
       },
     ],
     components: {

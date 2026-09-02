@@ -2,14 +2,16 @@ import { connect } from "mongoose";
 import config from "./index.js";
 
 export async function connectDb() {
-  const { user, pass, host, name } = config.db;
+  const { uri, user, pass, host, name } = config.db;
 
-  if (!user || !pass || !host) {
-    console.error("❌ Error: Missing MongoDB environment variables");
+  // A path-less URI resolves to `test`.
+  const mongoURI =
+    uri || `mongodb://${user}:${pass}@${host}:27017/${name}?authSource=admin`;
+
+  if (!mongoURI) {
+    console.error("❌ Error: Missing MongoDB configuration (URI or user/password)");
     process.exit(1);
   }
-
-  const mongoURI = `mongodb://${user}:${pass}@${host}:27017/${name}?authSource=admin`;
 
   try {
     await connect(mongoURI);

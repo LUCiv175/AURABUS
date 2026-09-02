@@ -3,6 +3,17 @@ import { stops, routes } from "../utils/staticData.js";
 import { simulateOccupancy } from "../utils/simulateOccupancy.js";
 import { findBusByIds } from "../repositories/BusRepository.js";
 
+const PREDICTION_TIMEOUT_MS = 2000;
+
+// "HH:MM:SS" local, running past 24:00 for trips crossing midnight.
+const arrivalMinutes = (value) => {
+  if (typeof value === "string" && value.includes(":")) {
+    const [h, m] = value.split(":");
+    return parseInt(h, 10) * 60 + (parseInt(m, 10) || 0);
+  }
+  return Math.floor(Number(value) / 60) || 0;
+};
+
 const getFetchOptions = () => {
   const authToken = Buffer.from(
     `${config.tnt.username}:${config.tnt.password}`,
@@ -84,30 +95,25 @@ export const getStopDetails = async (stopId) => {
           return null;
         }
 
-        let index = 0;
-        let bodyRequest = [];
+        const dayOfWeek = (new Date().getDay() + 6) % 7;
+        const currentStop = stopTimes[actualCurrentIndex];
+        const originMinutes = arrivalMinutes(currentStop?.arrivalTime);
+        const futureStopIndices = [];
+        const bodyRequest = [];
 
-        stopTimes.forEach((st) => {
-          if (st.stopId) {
-            let hour = 0;
-            const timeVal = st.arrivalTime;
-            if (typeof timeVal === "string" && timeVal.includes(":")) {
-              hour = parseInt(timeVal.split(":")[0], 10);
-            } else {
-              hour = Math.floor(Number(timeVal) / 3600);
-            }
-            const day_of_week = (new Date().getDay() + 6) % 7;
+        stopTimes.forEach((st, i) => {
+          if (!st.stopId || i <= actualCurrentIndex) return;
 
-            if (index > actualCurrentIndex) {
-              bodyRequest.push({
-                stop_encoded: parseInt(st.stopId, 10),
-                hour: parseInt(hour, 10),
-                day_of_week: parseInt(day_of_week, 10),
-                directionId: parseInt(directionId, 10) || 0,
-              });
-            }
-            index++;
-          }
+          const minutes = arrivalMinutes(st.arrivalTime);
+          futureStopIndices.push(i);
+          bodyRequest.push({
+            stop_encoded: parseInt(st.stopId, 10),
+            hour: Math.floor(minutes / 60),
+            day_of_week: dayOfWeek,
+            directionId: parseInt(directionId, 10) || 0,
+            stops_ahead: i - actualCurrentIndex,
+            minutes_ahead: Math.max(0, minutes - originMinutes),
+          });
         });
 
         let newStopTimes = [...stopTimes];
@@ -117,27 +123,31 @@ export const getStopDetails = async (stopId) => {
               `${config.prediction.url}/predict`,
               {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                  "Content-Type": "application/json",
+                  ...(config.prediction.internalKey && {
+                    "X-Internal-Server-Key": config.prediction.internalKey,
+                  }),
+                },
                 body: JSON.stringify({
                   route_encoded: parseInt(route.routeId, 10),
                   current_delay: parseInt(element.delay, 10) || 0,
+                  current_stop_encoded: parseInt(currentStop?.stopId, 10) || 0,
                   future_stops: bodyRequest,
                 }),
+                signal: AbortSignal.timeout(PREDICTION_TIMEOUT_MS),
               },
             );
 
             if (predResponse.ok) {
               const responseData = await predResponse.json();
               const predictions = responseData.predictions || [];
-              newStopTimes = stopTimes.map((st) => {
-                const prediction = predictions.find(
-                  (p) => p.stop_encoded === Number(st.stopId),
-                );
-                return {
-                  ...st,
-                  delayPredicted: prediction
-                    ? prediction.predicted_delay
-                    : null,
+              // Ordered as sent; a route may call at the same stop twice.
+              futureStopIndices.forEach((stopIndex, i) => {
+                if (!predictions[i]) return;
+                newStopTimes[stopIndex] = {
+                  ...newStopTimes[stopIndex],
+                  delayPredicted: predictions[i].predicted_delay,
                 };
               });
             }

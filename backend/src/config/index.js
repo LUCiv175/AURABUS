@@ -29,6 +29,7 @@ const config = {
     baseUrl: process.env.API_BASE_URL || "http://localhost",
   },
   db: {
+    uri: process.env.MONGO_URI,
     host: process.env.MONGO_HOST || "localhost",
     user: process.env.MONGO_USER,
     pass: process.env.MONGO_PASSWORD,
@@ -41,6 +42,7 @@ const config = {
   },
   prediction: {
     url: process.env.PREDICTION_URL,
+    internalKey: process.env.INTERNAL_API_KEY,
   },
   redis: {
     host: process.env.REDIS_HOST || "localhost",
@@ -53,8 +55,9 @@ const missingEnvConfig = [];
 if (!config.tnt.url) missingEnvConfig.push("API_URL");
 if (!config.tnt.username) missingEnvConfig.push("API_USER");
 if (!config.tnt.password) missingEnvConfig.push("API_PASSWORD");
-if (!config.db.user) missingEnvConfig.push("MONGO_USER");
-if (!config.db.pass) missingEnvConfig.push("MONGO_PASSWORD");
+if (!config.db.uri && (!config.db.user || !config.db.pass)) {
+  missingEnvConfig.push("MONGO_URI");
+}
 if (!config.prediction.url) missingEnvConfig.push("PREDICTION_URL");
 if (!config.redis.password) missingEnvConfig.push("REDIS_PASSWORD");
 
